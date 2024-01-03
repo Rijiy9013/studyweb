@@ -181,15 +181,15 @@
     },
     {
       "title": "Test",
-      "year": "123",
+      "year": "2024",
       "runtime": "123",
       "genres": [
-        "family"
+        "Comedy"
       ],
-      "director": "Kirill Simovin",
-      "actors": "test",
+      "director": "Nobody",
+      "actors": "Nobody",
       "plot": "123131",
-      "posterUrl": "https://i.pinimg.com/originals/98/01/4e/98014e6894bc5d2070377c0c1e4863fb.jpg",
+      "posterUrl": "https://i.pinimg.com/originals/123/01/4e/98014e6894bc5d2070377c0c1e4863fb.jpg",
       "rating": "1",
       "id": 11
     }
