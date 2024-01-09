@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Админка карточек товаров</title>
   <link rel="stylesheet" href="/src/styles.css">
 </head>
+
 <body>
 <header>
-  <h1>Зорин Максим 6409</h1>
+  <h1 id="creatorInfo"></h1>
   <button id="setupInitial">Засетапить начальные значения</button>
 </header>
 <div class="container">
@@ -22,8 +24,20 @@
       <button type="submit">Сохранить карточку</button>
     </form>
   </div>
-  <div class="product-list" id="productList"></div>
+  <div class="product-list" id="productList">
+    <div class="product-card skeleton">
+      <p>Имя:</p>
+      <p>Описание:</p>
+      <div class="placeholder"></div>
+      <p>Код товара:</p>
+      <p>Поставщик:</p>
+      <button class="skeleton-button">Удалить</button>
+      <button class="skeleton-button">Редактировать</button>
+    </div>
+  </div>
 </div>
+<div class="loader invisible"></div>
 <script src="/src/index.js"></script>
 </body>
+
 </html>
