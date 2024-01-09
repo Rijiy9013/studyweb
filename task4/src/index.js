@@ -3,14 +3,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const productList = document.getElementById("productList");
   const setupInitialButton = document.getElementById("setupInitial");
 
-  function editProduct(index) {
-    const products = JSON.parse(localStorage.getItem("products")) || [];
-    if (products[index]) {
-      const product = products[index];
+  async function editProduct(index) {
+    const products = await fetch("http://localhost:3000/products").then((response) => response.json());
+    const product = products.find(product => product.id === index);
+    if (product) {
       form.name.value = product.name;
       form.description.value = product.description;
       form.imageLink.value = product.imageLink;
-      form.productCode.value = product.productCode;
+      form.productCode.value = product.id;
       form.supplier.value = product.supplier;
       form.dataset.editIndex = index;
     }
@@ -21,35 +21,67 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const productData = {
+      id: form.productCode.value,
       name: form.name.value,
       description: form.description.value,
       imageLink: form.imageLink.value,
-      productCode: form.productCode.value,
       supplier: form.supplier.value
     };
 
     if (form.dataset.editIndex) {
-      updateProduct(productData, form.dataset.editIndex);
+      updateProduct(productData);
       delete form.dataset.editIndex;
     } else {
       saveProduct(productData);
     }
 
     form.reset();
-    displayProducts();
+    loadProducts();
   });
 
   setupInitialButton.addEventListener("click", () => {
     setInitialProducts();
   });
 
-  function updateProduct(productData, index) {
-    const products = JSON.parse(localStorage.getItem("products")) || [];
-    products[index] = productData;
-    localStorage.setItem("products", JSON.stringify(products));
+
+  async function loadProducts() {
+    document.getElementsByClassName("loader")[0].classList.remove("invisible");
+    try {
+      let products = await fetch("http://localhost:3000/products").then((response) => response.json());
+      products = products ? products : [];
+      let skeletons = document.getElementsByClassName("skeleton");
+      for (let skeleton of skeletons) {
+        skeleton.classList.add("invisible");
+      }
+      productList.innerHTML = "";
+      for (let product of products) {
+        displayProduct(product);
+      }
+    } catch (err) {
+      alert("Ошибка при получении карточек с сервера");
+    }
+    document.getElementsByClassName("loader")[0].classList.add("invisible");
   }
 
-  function setInitialProducts() {
+
+  async function loadCreatorInfo() {
+    let creatorInfo = await fetch("http://localhost:3000/creatorInfo").then((response) => response.json());
+    document.getElementById("creatorInfo").textContent = `${creatorInfo.name} ${creatorInfo.group}`;
+  }
+
+
+  async function updateProduct(productData) {
+    await fetch(`http://localhost:3000/products/${productData.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8"
+      },
+      body: JSON.stringify(productData)
+    });
+  }
+
+
+  async function setInitialProducts() {
     const initialProducts = [
       {
         name: "1",
@@ -66,44 +98,71 @@ document.addEventListener("DOMContentLoaded", () => {
         supplier: "PMI"
       }
     ];
-    localStorage.setItem("products", JSON.stringify(initialProducts));
-    displayProducts();
+    const skeletons = document.getElementsByClassName("skeleton");
+    for (let skeleton of skeletons) {
+      skeleton.classList.remove("invisible");
+    }
+
+    const products = await fetch("http://localhost:3000/products").then(res => res.json());
+    for (let product of products) {
+      await fetch(`http://localhost:3000/products/${product.id}`, {
+        method: "DELETE"
+      });
+    }
+
+    for (let product of initialProducts) {
+      await fetch("http://localhost:3000/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        body: JSON.stringify(product)
+      });
+    }
+
+    loadProducts();
   }
 
-  function saveProduct(productData) {
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    products.push(productData);
-    localStorage.setItem("products", JSON.stringify(products));
-  }
-
-  function displayProducts() {
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    console.log(products);
+  async function saveProduct(productData) {
     productList.innerHTML = "";
-    products.forEach((product, index) => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-      card.innerHTML = `
+    document.getElementsByClassName("loader")[0].classList.remove("invisible");
+    await fetch("http://localhost:3000/products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8"
+      },
+      body: JSON.stringify(productData)
+    });
+    displayProduct(productData);
+    document.getElementsByClassName("loader")[0].classList.add("invisible");
+  }
+
+  function displayProduct(product) {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.innerHTML = `
               <p><strong>Имя:</strong> ${product.name}</p>
               <p><strong>Описание:</strong> ${product.description}</p>
               <img src="${product.imageLink}" alt="${product.name}">
-              <p><strong>Код товара:</strong> ${product.productCode}</p>
+              <p><strong>Код товара:</strong> ${product.id}</p>
               <p><strong>Поставщик:</strong> ${product.supplier}</p>
-              <button onclick="deleteProduct(${index})">Удалить</button>
+              <button onclick="deleteProduct(${product.id})">Удалить</button>
           `;
-      const editButton = document.createElement("button");
-      editButton.textContent = "Редактировать";
-      editButton.addEventListener("click", () => editProduct(index));
-      card.appendChild(editButton);
-      productList.appendChild(card);
-    });
+    const editButton = document.createElement("button");
+    editButton.textContent = "Редактировать";
+    editButton.addEventListener("click", () => editProduct(product.id));
+    card.appendChild(editButton);
+    productList.appendChild(card);
   }
 
   window.deleteProduct = (index) => {
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    products.splice(index, 1);
-    localStorage.setItem("products", JSON.stringify(products));
-    displayProducts();
+    fetch(`http://localhost:3000/products/${index}`, {
+      method: "DELETE"
+    }).then(() => {
+      loadProducts();
+    });
   };
-  displayProducts();
+
+  loadProducts();
+  loadCreatorInfo();
 });
