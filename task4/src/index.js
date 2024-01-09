@@ -1,10 +1,10 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("productForm");
-  const productList = document.getElementById("productList");
-  const setupInitialButton = document.getElementById("setupInitial");
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('productForm');
+  const productList = document.getElementById('productList');
+  const setupInitialButton = document.getElementById('setupInitial');
 
   async function editProduct(index) {
-    const products = await fetch("http://localhost:3000/products").then((response) => response.json());
+    const products = await fetch('http://localhost:3000/products').then((response) => response.json());
     const product = products.find(product => product.id === index);
     if (product) {
       form.name.value = product.name;
@@ -18,14 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.editProduct = editProduct;
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener('submit', (event) => {
     event.preventDefault();
     const productData = {
       id: form.productCode.value,
       name: form.name.value,
       description: form.description.value,
       imageLink: form.imageLink.value,
-      supplier: form.supplier.value
+      supplier: form.supplier.value,
     };
 
     if (form.dataset.editIndex) {
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadProducts();
   });
 
-  setupInitialButton.addEventListener("click", () => {
+  setupInitialButton.addEventListener('click', () => {
     setInitialProducts();
   });
 
@@ -47,13 +47,13 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadProducts() {
     document.getElementsByClassName("loader")[0].classList.remove("invisible");
     try {
-      let products = await fetch("http://localhost:3000/products").then((response) => response.json());
+      let products = await fetch('http://localhost:3000/products').then((response) => response.json());
       products = products ? products : [];
-      let skeletons = document.getElementsByClassName("skeleton");
+      let skeletons = document.getElementsByClassName('skeleton');
       for (let skeleton of skeletons) {
-        skeleton.classList.add("invisible");
+        skeleton.classList.add('invisible');
       }
-      productList.innerHTML = "";
+      productList.innerHTML = '';
       for (let product of products) {
         displayProduct(product);
       }
@@ -65,21 +65,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   async function loadCreatorInfo() {
-    let creatorInfo = await fetch("http://localhost:3000/creatorInfo").then((response) => response.json());
-    document.getElementById("creatorInfo").textContent = `${creatorInfo.name} ${creatorInfo.group}`;
+    let creatorInfo = await fetch('http://localhost:3000/creatorInfo').then((response) => response.json());
+    document.getElementById('creatorInfo').textContent = `${creatorInfo.name} ${creatorInfo.group}`;
   }
 
 
   async function updateProduct(productData) {
     await fetch(`http://localhost:3000/products/${productData.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json;charset=utf-8"
+        'Content-Type': 'application/json;charset=utf-8'
       },
       body: JSON.stringify(productData)
     });
   }
-
 
   async function setInitialProducts() {
     const initialProducts = [
@@ -98,23 +97,23 @@ document.addEventListener("DOMContentLoaded", () => {
         supplier: "PMI"
       }
     ];
-    const skeletons = document.getElementsByClassName("skeleton");
+    const skeletons = document.getElementsByClassName('skeleton');
     for (let skeleton of skeletons) {
-      skeleton.classList.remove("invisible");
+      skeleton.classList.remove('invisible');
     }
 
-    const products = await fetch("http://localhost:3000/products").then(res => res.json());
+    const products = await fetch('http://localhost:3000/products').then(res => res.json());
     for (let product of products) {
       await fetch(`http://localhost:3000/products/${product.id}`, {
-        method: "DELETE"
+        method: 'DELETE'
       });
     }
 
     for (let product of initialProducts) {
-      await fetch("http://localhost:3000/products", {
-        method: "POST",
+      await fetch('http://localhost:3000/products', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json;charset=utf-8"
+          'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(product)
       });
@@ -124,12 +123,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function saveProduct(productData) {
-    productList.innerHTML = "";
+    productList.innerHTML = '';
     document.getElementsByClassName("loader")[0].classList.remove("invisible");
-    await fetch("http://localhost:3000/products", {
-      method: "POST",
+    await fetch('http://localhost:3000/products', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json;charset=utf-8"
+        'Content-Type': 'application/json;charset=utf-8'
       },
       body: JSON.stringify(productData)
     });
@@ -138,8 +137,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function displayProduct(product) {
-    const card = document.createElement("div");
-    card.className = "product-card";
+    const card = document.createElement('div');
+    card.className = 'product-card';
     card.innerHTML = `
               <p><strong>Имя:</strong> ${product.name}</p>
               <p><strong>Описание:</strong> ${product.description}</p>
@@ -148,16 +147,16 @@ document.addEventListener("DOMContentLoaded", () => {
               <p><strong>Поставщик:</strong> ${product.supplier}</p>
               <button onclick="deleteProduct(${product.id})">Удалить</button>
           `;
-    const editButton = document.createElement("button");
-    editButton.textContent = "Редактировать";
-    editButton.addEventListener("click", () => editProduct(product.id));
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Редактировать';
+    editButton.addEventListener('click', () => editProduct(product.id));
     card.appendChild(editButton);
     productList.appendChild(card);
   }
 
   window.deleteProduct = (index) => {
     fetch(`http://localhost:3000/products/${index}`, {
-      method: "DELETE"
+      method: 'DELETE'
     }).then(() => {
       loadProducts();
     });
