@@ -1,0 +1,22 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "1",
+      "description": "1",
+      "imageLink": "https://img.freepik.com/free-photo/vertical-shot-of-a-boat-with-a-beautiful-landscape_181624-48227.jpg?w=740&t=st=1704283589~exp=1704284189~hmac=984c090c78e8eda2699d2a21a3d08124558f4db8aa789b51f5399942b0268345",
+      "supplier": "PMI"
+    },
+    {
+      "id": "2",
+      "name": "2",
+      "description": "2",
+      "imageLink": "https://img.freepik.com/free-photo/tall-ship-sailing-on-the-calm-water_181624-18234.jpg?w=360&t=st=1704283549~exp=1704284149~hmac=c3d99cfb11bda7770a28f1c1a526b33e9c552727aa925e4d6ef6a795ba7de91b",
+      "supplier": "ssau"
+    }
+  ],
+  "creatorInfo": {
+    "name": "Зорин Максим",
+    "group": "6409"
+  }
+}
