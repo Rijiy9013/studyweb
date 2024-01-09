@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админка карточек товаров</title>
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+<header>
+  <h1>Зорин Максим 6409</h1>
+  <button id="setupInitial">Засетапить начальные значения</button>
+</header>
+<div class="container">
+  <div class="form-container">
+    <form id="productForm">
+      <input type="text" id="name" placeholder="Имя" required>
+      <textarea id="description" placeholder="Описание" required></textarea>
+      <input type="url" id="imageLink" placeholder="Ссылка на изображение" required>
+      <input type="text" id="productCode" placeholder="Код товара" required>
+      <input type="text" id="supplier" placeholder="Поставщик" required>
+      <button type="submit">Сохранить карточку</button>
+    </form>
+  </div>
+  <div class="product-list" id="productList"></div>
+</div>
+<script src="/src/index.js"></script>
+</body>
+</html>
